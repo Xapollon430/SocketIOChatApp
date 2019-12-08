@@ -1,6 +1,8 @@
 const initialState = {
 	userName: "",
-	roomName: ""
+	roomName: "",
+	message: "",
+	messages: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -14,6 +16,16 @@ const reducer = (state = initialState, action) => {
 			return {
 				...state,
 				roomName: action.payload.roomName
+			};
+		case "ADD_MESSAGE":
+			return {
+				...state,
+				message: action.payload.message
+			};
+		case "ADD_TO_MESSAGES":
+			return {
+				...state,
+				messages: [...state.messages, action.payload.message]
 			};
 		default:
 			return state;

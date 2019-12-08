@@ -10,24 +10,21 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 io.on("connection", socket => {
-	socket.on("join", ({ userName, roomName }, callback) => {
-		let { user } = addUser({ id: socket.id, userName, roomName });
+	socket.on("join", ({ userName, roomName }) => {
+		let user = addUser({ id: socket.id, userName, roomName });
+
+		socket.broadcast.to(user.roomName).emit("message", { user: "admin", text: `${user.roomName}, has joined!` });
+
+		socket.emit("message", { user: "admin", text: `${user.userName} welcome to the room ${user.roomName}` });
 
 		socket.join(user.room);
-
-		socket.broadcast.to(user.room).emit("message", { user: "admin", test: `${user.name}, has joined!` });
-
-		socket.emit("message", { user: "admin", text: `${user.name} welcome to the room ${user.room}` });
-
-		callback();
 	});
 
-	socket.on("sendMessage", (message, callback) => {
+	socket.on("sendMessage", (message, cb) => {
 		const user = getUser(socket.id);
-
-		io.to(user.room).emit("message", { user: user.name, text: message });
-
-		callback();
+		console.log(message, user.roomName);
+		io.to(user.roomName).emit("message", { user: user.userName, text: message });
+		cb();
 	});
 
 	socket.on("disconnect", () => {

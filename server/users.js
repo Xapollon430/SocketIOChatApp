@@ -1,10 +1,10 @@
 const users = [];
 
-const addUser = ({ id, name, room }) => {
-	name = name.trim().toLowerCase();
-	room = room.trim().toLowerCase();
+const addUser = ({ id, userName, roomName }) => {
+	userName = userName.trim().toLowerCase();
+	roomName = roomName.trim().toLowerCase();
 
-	const existingUser = users.find(user => user.room === room && user.name === name);
+	const existingUser = users.find(user => user.room === roomName && user.name === userName);
 
 	if (existingUser) {
 		return {
@@ -12,11 +12,11 @@ const addUser = ({ id, name, room }) => {
 		};
 	}
 
-	const user = { id, name, room };
+	const user = { id, userName, roomName };
 
 	users.push(user);
 
-	return { user };
+	return user;
 };
 
 const removeUser = id => {
@@ -27,9 +27,7 @@ const removeUser = id => {
 	}
 };
 
-const getUser = id => {
-	users.find(user => user.id === id);
-};
+const getUser = id => users.find(user => user.id === id);
 
 const getUsersInRoom = room => users.filter(user => user.room === room);
 
