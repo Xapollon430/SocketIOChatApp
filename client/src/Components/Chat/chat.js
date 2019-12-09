@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import io from "socket.io-client";
 import { addMessage, addToMessages } from "../../Store/actions";
@@ -7,7 +7,9 @@ const ENDPOINT = "localhost:5000";
 let socket;
 
 const Chat = props => {
-	let { userName, roomName, message, messages, addMessage, addToMessages } = props;
+	let { userName, roomName } = props;
+	let [message, setMessage] = useState("");
+	let [messages, setMessages] = useState([]);
 
 	useEffect(() => {
 		socket = io(ENDPOINT);
@@ -21,8 +23,7 @@ const Chat = props => {
 
 	useEffect(() => {
 		socket.on("message", message => {
-			console.log(message);
-			addToMessages(message);
+			setMessages([...messages, message]);
 		});
 	}, [messages]);
 
@@ -30,7 +31,7 @@ const Chat = props => {
 		e.preventDefault();
 		if (message) {
 			socket.emit("sendMessage", message, () => {
-				addMessage("");
+				setMessage("");
 			});
 		}
 	};
@@ -41,7 +42,7 @@ const Chat = props => {
 		<div>
 			<input
 				onChange={e => {
-					addMessage(e.target.value);
+					setMessage(e.target.value);
 				}}
 				onKeyPress={e => (e.key === "Enter" ? sendMessage(e) : null)}
 				value={message}
@@ -55,9 +56,7 @@ const Chat = props => {
 const MapStateToProps = state => {
 	return {
 		userName: state.userName,
-		roomName: state.roomName,
-		message: state.message,
-		messages: state.messages
+		roomName: state.roomName
 	};
 };
 
@@ -72,4 +71,4 @@ const MapDispatchToProps = dispatch => {
 	};
 };
 
-export default connect(MapStateToProps, MapDispatchToProps)(Chat);
+export default connect(MapStateToProps)(Chat);

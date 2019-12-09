@@ -22,8 +22,7 @@ io.on("connection", socket => {
 
 	socket.on("sendMessage", (message, cb) => {
 		const user = getUser(socket.id);
-		console.log(message, user.roomName);
-		io.to(user.roomName).emit("message", { user: user.userName, text: message });
+		io.to(user.room).emit("message", { user: user.userName, text: message });
 		cb();
 	});
 
